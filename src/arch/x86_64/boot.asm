@@ -33,8 +33,9 @@ print_vendorid:
 ; parameter: ebx - "string"
 printdw:
     call printw
-    shr ebx, 16
+    rol ebx, 16
     call printw
+    rol ebx, 16
     ret
 
 ; Prints a 2-character "string" in a word
