@@ -10,8 +10,45 @@ start:
     call test_cpuid
     call test_long_mode
 
-    mov dword [0xb8000], 0x2f4b2f4f
+    call print_vendorid
+
     hlt
+
+; prints the vendor id from cpuid
+print_vendorid:
+    mov eax, 0
+    cpuid
+    ; set up eax as vga buffer location
+    mov eax, 0xb8000
+    ; vendor id stored in ebx, edx, ecx
+    call printdw
+    mov ebx, edx
+    call printdw
+    mov ebx, ecx
+    call printdw
+    ret
+
+; Prints a 4-character "string" in a double word
+; parameter: eax - VGA buffer location (will be incremented by 8)
+; parameter: ebx - "string"
+printdw:
+    call printw
+    shr ebx, 16
+    call printw
+    ret
+
+; Prints a 2-character "string" in a word
+; parameters: eax - VGA buffer location (will be incremented by 4)
+; parameters: bx - 16-bit word "string" as 'lh'
+printw:
+    .C equ 0xFC
+    mov byte [eax + 3], .C
+    mov byte [eax + 2], bh
+    mov byte [eax + 1], .C
+    mov byte [eax + 0], bl
+    add eax, 4
+    ret
+
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ASCII) in al
