@@ -14,6 +14,9 @@ start:
     call setup_page_tables
     call enable_paging
 
+    ; load the 64-bit GDT
+    lgdt [gdt64.pointer]
+
     call print_vendorid
 
     hlt
@@ -154,6 +157,15 @@ enable_paging:
     mov cr0, eax
 
     ret
+
+section .rodata
+gdt64:
+    dq 0 ; zero entry
+    dq (1<<44) | (1<<47) | (1<<41) | (1<<43) | (1<<53) ; code segment
+    dq (1<<44) | (1<<47) | (1<<41) ; data segment
+.pointer:
+    dw $ - gdt64 - 1
+    dq gdt64
 
 ; Reserve space for stack
 section .bss
