@@ -5,3 +5,6 @@ authors = ["Jacob Krall <jacob@jkrall.net>", "Philipp Oppermann <dev@phil-opp.co
 
 [lib]
 crate-type = ["staticlib"]
+
+[dependencies]
+rlibc = "0.1"
