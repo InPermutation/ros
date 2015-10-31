@@ -33,6 +33,7 @@ impl ColorCode {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 struct ScreenChar {
     ascii_character: u8,
     color_code: ColorCode,
@@ -76,7 +77,22 @@ impl Writer {
         unsafe { self.buffer.get_mut() }
     }
 
-    fn new_line(&mut self) {/* TODO */}
+    fn new_line(&mut self) {
+        for row in 0..(BUFFER_HEIGHT-1) {
+            let buffer = self.buffer();
+            buffer.chars[row] = buffer.chars[row + 1]
+        }
+        self.clear_row(BUFFER_HEIGHT-1);
+        self.column_position = 0;
+    }
+
+    fn clear_row(&mut self, row: usize) {
+        let blank = ScreenChar {
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+        self.buffer().chars[row] = [blank; BUFFER_WIDTH];
+    }
 
     pub fn write_str(&mut self, s: &str) {
         for byte in s.bytes() {
@@ -96,7 +112,10 @@ pub fn print_something() {
     writer.write_byte(b'H');
     writer.write_byte(b'i');
     writer.write_str(", there!");
+    writer.write_str("\nMy name is Jacob.\n");
     write!(writer, "The numbers are {} and {}", 42, 1.0/3.0);
+    writer.write_byte(b'\n');
+    writer.write_str("<--------><--------><--------><--------><--------><--------><--------><-------->BOO");
     }
 }
 
