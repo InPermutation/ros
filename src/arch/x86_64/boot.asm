@@ -1,4 +1,5 @@
 global start
+extern long_mode_start
 
 section .text
 bits 32
@@ -22,6 +23,8 @@ start:
     mov ss, ax ; stack selector
     mov ds, ax ; data selector
     mov es, ax ; extra selector
+
+    jmp gdt64.code:long_mode_start
 
     call print_vendorid
 
