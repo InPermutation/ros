@@ -74,8 +74,13 @@ impl Writer {
     }
 
     fn new_line(&mut self) {/* TODO */}
-}
 
+    pub fn write_str(&mut self, s: &str) {
+        for byte in s.bytes() {
+            self.write_byte(byte)
+        }
+    }
+}
 
 pub fn print_something() {
     unsafe {
@@ -87,5 +92,6 @@ pub fn print_something() {
 
     writer.write_byte(b'H');
     writer.write_byte(b'i');
+    writer.write_str(", there!")
     }
 }
