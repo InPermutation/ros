@@ -4,7 +4,8 @@ section .text
 bits 32
 start:
 ; Set up stack pointer
-    mov esp, stack_top
+    mov ebp, stack_top
+    mov esp, ebp
 
     call test_multiboot
     call test_cpuid
