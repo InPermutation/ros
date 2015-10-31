@@ -18,8 +18,8 @@ start:
 print_vendorid:
     mov eax, 0
     cpuid
-    ; set up eax as vga buffer location
-    mov eax, 0xb8000
+    ; target buffer = vga
+    mov edi, 0xb8000
     ; vendor id stored in ebx, edx, ecx
     call printdw
     mov ebx, edx
@@ -29,7 +29,7 @@ print_vendorid:
     ret
 
 ; Prints a 4-character "string" in a double word
-; parameter: eax - VGA buffer location (will be incremented by 8)
+; parameter: edi - VGA buffer location (will be incremented by 8)
 ; parameter: ebx - "string"
 printdw:
     call printw
@@ -39,17 +39,16 @@ printdw:
     ret
 
 ; Prints a 2-character "string" in a word
-; parameters: eax - VGA buffer location (will be incremented by 4)
+; parameters: edi - VGA buffer location (will be incremented by 4)
 ; parameters: bx - 16-bit word "string" as 'lh'
 printw:
     .C equ 0xFC
-    mov byte [eax + 3], .C
-    mov byte [eax + 2], bh
-    mov byte [eax + 1], .C
-    mov byte [eax + 0], bl
-    add eax, 4
+    mov byte [edi + 3], .C
+    mov byte [edi + 2], bh
+    mov byte [edi + 1], .C
+    mov byte [edi + 0], bl
+    add edi, 4
     ret
-
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ASCII) in al
