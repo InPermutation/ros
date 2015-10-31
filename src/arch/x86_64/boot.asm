@@ -26,45 +26,7 @@ start:
 
     jmp gdt64.code:long_mode_start
 
-    call print_vendorid
-
     hlt
-
-; prints the vendor id from cpuid
-print_vendorid:
-    mov eax, 0
-    cpuid
-    ; target buffer = vga
-    mov edi, 0xb8000
-    ; vendor id stored in ebx, edx, ecx
-    call printdw
-    mov ebx, edx
-    call printdw
-    mov ebx, ecx
-    call printdw
-    ret
-
-; Prints a 4-character "string" in a double word
-; parameter: edi - VGA buffer location (will be incremented by 8)
-; parameter: ebx - "string"
-printdw:
-    call printw
-    rol ebx, 16
-    call printw
-    rol ebx, 16
-    ret
-
-; Prints a 2-character "string" in a word
-; parameters: edi - VGA buffer location (will be incremented by 4)
-; parameters: bx - 16-bit word "string" as 'lh'
-printw:
-    .C equ 0xFC
-    mov byte [edi + 3], .C
-    mov byte [edi + 2], bh
-    mov byte [edi + 1], .C
-    mov byte [edi + 0], bl
-    add edi, 4
-    ret
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ASCII) in al
